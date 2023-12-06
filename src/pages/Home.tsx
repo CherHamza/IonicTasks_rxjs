@@ -41,9 +41,12 @@ const Home: React.FC = () => {
 
 
   const handleAddTask = async () => {
+    // Verify that the label is not empty
     if (newTaskLabel.trim() !== "") {
       const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
       const confirm = await showConfirm('Confirmez l\'ajout de tâche')
+
+      // Verify if comfirm = true
       if(confirm) {
         await addTask(newTask);
         setNewTaskLabel('');
@@ -54,6 +57,7 @@ const Home: React.FC = () => {
   };
 
   const handleUpdateTask = async (task: Task) => {
+    
     if (doubleClickId === task.id) {
       await updateTask({ ...task, completed: !task.completed });
       setDoubleClickId(null);
@@ -61,11 +65,12 @@ const Home: React.FC = () => {
       setDoubleClickId(task.id);
       setTimeout(() => {
         setDoubleClickId(null);
-      }, 3000); 
+      }, 3000); // Delay of 3 secondes for doubleClic
     }
   };
 
   const handleDeleteTask = async (taskId: number) => {
+    // Verify if taskId isset
     if(taskId){
       const confirm = await showConfirm('Confirmez la suppression de la tâche')
         if(confirm) {
