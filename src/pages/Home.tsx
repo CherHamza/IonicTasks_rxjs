@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { getTasks, addTask, updateTask, deleteTask, tasksSubject } from '../services/taskService';
-import { map } from 'rxjs/operators';
-import { Dialog } from '@capacitor/dialog';
-import './Home.css'; 
+import React, { useEffect, useState } from "react";
+import {
+  getTasks,
+  addTask,
+  updateTask,
+  deleteTask,
+  tasksSubject,
+} from "../services/taskService";
+import { map } from "rxjs/operators";
+import { Dialog } from "@capacitor/dialog";
+import "./Home.css";
 
 interface Task {
   id: number;
@@ -12,30 +18,36 @@ interface Task {
 
 const Home: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [newTaskLabel, setNewTaskLabel] = useState<string>('');
+  const [newTaskLabel, setNewTaskLabel] = useState<string>("");
   const [doubleClickId, setDoubleClickId] = useState<number | null>(null);
 
   useEffect(() => {
-    const subscription = tasksSubject.pipe(
-      map((tasks: Task[]) => {
-        setTasks(tasks);
-        return tasks; 
-      })
-    ).subscribe();
-  
+    const subscription = tasksSubject
+      .pipe(
+        map((tasks: Task[]) => {
+          setTasks(tasks);
+          return tasks;
+        })
+      )
+      .subscribe();
+
     // Fetch initial tasks
     getTasks();
-  
+
     return () => subscription.unsubscribe();
   }, []);
 
   const handleAddTask = async () => {
-
-// Vérif que le libellé n'est pas vide
-    if (newTaskLabel.trim() !== '') { 
-      const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
-      await addTask(newTask);
-      setNewTaskLabel('');
+    // Vérif que le libellé n'est pas vide
+    if (newTaskLabel.trim() !== "") {
+      const newTask: Task = { id: 0, label: newTaskLabel, completed: true };
+      const confirm = await showConfirm()
+      if(confirm) {
+        await addTask(newTask);
+        setNewTaskLabel('');
+      }
+    } else {
+      showAlert("Vous devez entrer une tâche!");
     }
   };
 
@@ -54,36 +66,37 @@ const Home: React.FC = () => {
   const handleDeleteTask = async (taskId: number) => {
     await deleteTask(taskId);
   };
-const showAlert = async () => {
-  await Dialog.alert({
-    title: 'Stop',
-    message: 'this is an error',
-  });
-};
+  const showAlert = async (message: string) => {
+    await Dialog.alert({
+      title: "Stop",
+      message: message,
+    });
+  };
 
-const showConfirm = async () => {
-  const { value } = await Dialog.confirm({
-    title: 'Confirm',
-    message: `Confirmez l'ajout de tâches `,
-  });
-// mettre la logique ici 
-if(value === true ) {
-  console.log('add')
-  handleAddTask();
-} else {
-  console.log('not add')
-}
-};
+  const showConfirm = async () => {
+    const { value } = await Dialog.confirm({
+      title: "Confirm",
+      message: `Confirmez l'ajout de tâches `,
+    });
+    // mettre la logique ici
+    if (value === true) {
+      console.log("add");
+      // handleAddTask();
+    } else {
+      console.log("not add");
+    }
+    return value;
+  };
 
-const showPrompt = async () => {
-  const { value, cancelled } = await Dialog.prompt({
-    title: 'Hello',
-    message: `What's your name?`,
-  });
+  const showPrompt = async () => {
+    const { value, cancelled } = await Dialog.prompt({
+      title: "Hello",
+      message: `What's your name?`,
+    });
 
-  console.log('Name:', value);
-  console.log('Cancelled:', cancelled);
-};
+    console.log("Name:", value);
+    console.log("Cancelled:", cancelled);
+  };
   return (
     <div className="task-list-container">
       <h1 className="title">Task List</h1>
@@ -95,22 +108,29 @@ const showPrompt = async () => {
           onChange={(e) => setNewTaskLabel(e.target.value)}
         />
 
-        <button className="add-task-button" onClick={ showConfirm }>Add Task</button>
-         
-
+        <button className="add-task-button" onClick={handleAddTask}>
+          Add Task
+        </button>
       </div>
 
       <ul className="tasks-list">
         {tasks.map((task) => (
           <li className="task-item" key={task.id}>
-            <span>{task.label}</span>
+            <span className={task.completed ? "invalidate" : "validate"}>
+              {task.label}
+            </span>
             <button
-              className={`update-task-button${doubleClickId === task.id ? ' active' : ''}`}
+              className={`update-task-button${
+                doubleClickId === task.id ? " active" : ""
+              }`}
               onClick={() => handleUpdateTask(task)}
             >
-              {task.completed ? 'Invalidate' : 'Validate'}
+              {task.completed ? "Invalidate" : "Validate"}
             </button>
-            <button className="delete-task-button" onClick={() => handleDeleteTask(task.id)}>
+            <button
+              className="delete-task-button"
+              onClick={() => handleDeleteTask(task.id)}
+            >
               Delete
             </button>
           </li>

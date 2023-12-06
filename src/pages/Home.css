@@ -11,6 +11,10 @@
     text-align: center;
     margin-bottom: 20px;
   }
+
+  .validate{
+    text-decoration: line-through;
+  }
   
   .add-task-container {
     display: flex;

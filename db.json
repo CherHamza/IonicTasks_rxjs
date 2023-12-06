@@ -3,8 +3,17 @@
     {
       "id": 3,
       "label": "Travailler sur le projet",
-      "completed": false
+      "completed": true
     },
-    
+    {
+      "id": 4,
+      "label": "Faire les courses",
+      "completed": true
+    },
+    {
+      "id": 5,
+      "label": "hahahaha",
+      "completed": true
+    }
   ]
 }
