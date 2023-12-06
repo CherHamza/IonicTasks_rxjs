@@ -22,3 +22,9 @@ npx cap sync
 ionic serve
 npm run json-server
 ```
+
+### Contributors 
+
+- Virginie Giacometti
+
+- Hamza Cheracher
