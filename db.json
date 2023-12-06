@@ -9,6 +9,11 @@
       "id": 3,
       "label": "Travailler sur le projet",
       "completed": false
+    },
+    {
+      "id": 4,
+      "label": "Faire le ménage",
+      "completed": false
     }
   ]
 }

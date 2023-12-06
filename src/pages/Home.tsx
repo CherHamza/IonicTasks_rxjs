@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getTasks, addTask, updateTask, deleteTask, tasksSubject } from '../services/taskService';
 import { map } from 'rxjs/operators';
+import { Dialog } from '@capacitor/dialog';
 
 interface Task {
   id: number;
@@ -27,7 +28,8 @@ const Home: React.FC = () => {
   }, []);
 
   const handleAddTask = async () => {
-    if (newTaskLabel.trim() !== '') { // Vérif que le libellé n'est pas vide
+// Vérif que le libellé n'est pas vide
+    if (newTaskLabel.trim() !== '') { 
       const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
       await addTask(newTask);
       setNewTaskLabel(''); // Réinitialise le libellé de la nouvelle tâche après l'ajout
@@ -41,7 +43,36 @@ const Home: React.FC = () => {
   const handleDeleteTask = async (taskId: number) => {
     await deleteTask(taskId);
   };
+const showAlert = async () => {
+  await Dialog.alert({
+    title: 'Stop',
+    message: 'this is an error',
+  });
+};
 
+const showConfirm = async () => {
+  const { value } = await Dialog.confirm({
+    title: 'Confirm',
+    message: `Confirmez l'ajout de tâches `,
+  });
+// mettre la logique ici 
+if(value === true ) {
+  console.log('add')
+  handleAddTask();
+} else {
+  console.log('not add')
+}
+};
+
+const showPrompt = async () => {
+  const { value, cancelled } = await Dialog.prompt({
+    title: 'Hello',
+    message: `What's your name?`,
+  });
+
+  console.log('Name:', value);
+  console.log('Cancelled:', cancelled);
+};
   return (
     <div>
       <h1>Task List</h1>
@@ -52,7 +83,7 @@ const Home: React.FC = () => {
           value={newTaskLabel}
           onChange={(e) => setNewTaskLabel(e.target.value)}
         />
-        <button onClick={handleAddTask}>Add Task</button>
+        <button onClick={ showConfirm }>Add Task</button>
       </div>
 
       <ul>
