@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getTasks, addTask, updateTask, deleteTask, tasksSubject } from '../services/taskService';
 import { map } from 'rxjs/operators';
+import './Home.css'; 
 
 interface Task {
   id: number;
@@ -10,7 +11,8 @@ interface Task {
 
 const Home: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [newTaskLabel, setNewTaskLabel] = useState<string>(''); // Ajout d'un état local pour le libellé de la nouvelle tâche
+  const [newTaskLabel, setNewTaskLabel] = useState<string>('');
+  const [doubleClickId, setDoubleClickId] = useState<number | null>(null);
 
   useEffect(() => {
     const subscription = tasksSubject.pipe(
@@ -27,15 +29,23 @@ const Home: React.FC = () => {
   }, []);
 
   const handleAddTask = async () => {
-    if (newTaskLabel.trim() !== '') { // Vérif que le libellé n'est pas vide
+    if (newTaskLabel.trim() !== '') {
       const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
       await addTask(newTask);
-      setNewTaskLabel(''); // Réinitialise le libellé de la nouvelle tâche après l'ajout
+      setNewTaskLabel('');
     }
   };
 
   const handleUpdateTask = async (task: Task) => {
-    await updateTask({ ...task, completed: !task.completed });
+    if (doubleClickId === task.id) {
+      await updateTask({ ...task, completed: !task.completed });
+      setDoubleClickId(null);
+    } else {
+      setDoubleClickId(task.id);
+      setTimeout(() => {
+        setDoubleClickId(null);
+      }, 3000); // Délai de 3 secondes pour le double clic
+    }
   };
 
   const handleDeleteTask = async (taskId: number) => {
@@ -43,26 +53,33 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Task List</h1>
-      <div>
+    <div className="task-list-container">
+      <h1 className="title">Task List</h1>
+      <div className="add-task-container">
         <input
           type="text"
           placeholder="New Task Label"
           value={newTaskLabel}
           onChange={(e) => setNewTaskLabel(e.target.value)}
         />
-        <button onClick={handleAddTask}>Add Task</button>
+        <button className="add-task-button" onClick={handleAddTask}>
+          Add Task
+        </button>
       </div>
 
-      <ul>
+      <ul className="tasks-list">
         {tasks.map((task) => (
-          <li key={task.id}>
+          <li className="task-item" key={task.id}>
             <span>{task.label}</span>
-            <button onClick={() => handleUpdateTask(task)}>
+            <button
+              className={`update-task-button${doubleClickId === task.id ? ' active' : ''}`}
+              onClick={() => handleUpdateTask(task)}
+            >
               {task.completed ? 'Invalidate' : 'Validate'}
             </button>
-            <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+            <button className="delete-task-button" onClick={() => handleDeleteTask(task.id)}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
