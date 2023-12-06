@@ -1,19 +1,10 @@
 {
   "tasks": [
     {
-      "id": 2,
-      "label": "Faire du sport",
-      "completed": true
-    },
-    {
       "id": 3,
       "label": "Travailler sur le projet",
       "completed": false
     },
-    {
-      "id": 4,
-      "label": "Faire le ménage",
-      "completed": false
-    }
+    
   ]
 }
