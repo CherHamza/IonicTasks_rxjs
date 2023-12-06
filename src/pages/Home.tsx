@@ -25,8 +25,14 @@ const Home: React.FC = () => {
     const subscription = tasksSubject
       .pipe(
         map((tasks: Task[]) => {
-          setTasks(tasks);
-          return tasks;
+          // Trie les tâches en fonction de leur état (completed)
+          const sortedTasks = [...tasks].sort((a, b) => {
+            if (a.completed && !b.completed) return 1; // Les tâches complétées vont en bas
+            if (!a.completed && b.completed) return -1; // Les tâches non complétées vont en haut
+            return 0;
+          });
+          setTasks(sortedTasks);
+          return sortedTasks;
         })
       )
       .subscribe();
@@ -36,6 +42,7 @@ const Home: React.FC = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
 
   const handleAddTask = async () => {
     // Vérif que le libellé n'est pas vide
@@ -105,8 +112,7 @@ const Home: React.FC = () => {
           type="text"
           placeholder="New Task Label"
           value={newTaskLabel}
-          onChange={(e) => setNewTaskLabel(e.target.value)}
-        />
+          onChange={(e) => setNewTaskLabel(e.target.value)}/>
 
         <button className="add-task-button" onClick={handleAddTask}>
           Add Task
@@ -116,8 +122,13 @@ const Home: React.FC = () => {
       <ul className="tasks-list">
         {tasks.map((task) => (
           <li className="task-item" key={task.id}>
-            <span className={task.completed ? "invalidate" : "validate"}>
-              {task.label}
+            <span
+              className={`task-label ${
+                doubleClickId === task.id ? "double-click" : ""
+              }`}
+              onClick={() => handleUpdateTask(task)}
+            >
+              {task.completed ? <s>{task.label}</s> : task.label}
             </span>
             <button
               className={`update-task-button${
@@ -125,7 +136,7 @@ const Home: React.FC = () => {
               }`}
               onClick={() => handleUpdateTask(task)}
             >
-              {task.completed ? "Invalidate" : "Validate"}
+              {task.completed ? "Validate" : "Invalidate"}
             </button>
             <button
               className="delete-task-button"

@@ -8,12 +8,7 @@
     {
       "id": 4,
       "label": "Faire les courses",
-      "completed": true
-    },
-    {
-      "id": 5,
-      "label": "hahahaha",
-      "completed": true
+      "completed": false
     }
   ]
 }
