@@ -46,7 +46,7 @@ const Home: React.FC = () => {
   const handleAddTask = async () => {
     // Vérif que le libellé n'est pas vide
     if (newTaskLabel.trim() !== "") {
-      const newTask: Task = { id: 0, label: newTaskLabel, completed: true };
+      const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
       const confirm = await showConfirm('Confirmez l\'ajout de tâche')
       if(confirm) {
         await addTask(newTask);
@@ -130,7 +130,7 @@ const Home: React.FC = () => {
               }`}
               onClick={() => handleUpdateTask(task)}
             >
-              {task.completed ? "Validate" : "Invalidate"}
+              {task.completed ? "Invalidate" : "Validate"}
             </button>
             <button
               className="delete-task-button"
