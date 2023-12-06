@@ -38,7 +38,7 @@
     {
       "id": 10,
       "label": "Prendre un bain CHAUD avec de la mousse et le petit canard",
-      "completed": true
+      "completed": false
     }
   ]
 }

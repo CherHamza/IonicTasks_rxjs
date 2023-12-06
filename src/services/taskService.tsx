@@ -1,4 +1,3 @@
-// src/services/taskService.ts
 import { BehaviorSubject } from 'rxjs';
 
 const BASE_URL = 'http://localhost:3001';

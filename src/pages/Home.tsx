@@ -25,10 +25,9 @@ const Home: React.FC = () => {
     const subscription = tasksSubject
       .pipe(
         map((tasks: Task[]) => {
-          // Trie les tâches en fonction de leur état (completed)
           const sortedTasks = [...tasks].sort((a, b) => {
-            if (a.completed && !b.completed) return 1; // Les tâches complétées vont en bas
-            if (!a.completed && b.completed) return -1; // Les tâches non complétées vont en haut
+            if (a.completed && !b.completed) return 1; 
+            if (!a.completed && b.completed) return -1; 
             return 0;
           });
           setTasks(sortedTasks);
@@ -36,15 +35,12 @@ const Home: React.FC = () => {
         })
       )
       .subscribe();
-
-    // Fetch initial tasks
     getTasks();
     return () => subscription.unsubscribe();
   }, []);
 
 
   const handleAddTask = async () => {
-    // Vérif que le libellé n'est pas vide
     if (newTaskLabel.trim() !== "") {
       const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
       const confirm = await showConfirm('Confirmez l\'ajout de tâche')
@@ -65,12 +61,11 @@ const Home: React.FC = () => {
       setDoubleClickId(task.id);
       setTimeout(() => {
         setDoubleClickId(null);
-      }, 3000); // Délai de 3 secondes pour le double clic
+      }, 3000); 
     }
   };
 
   const handleDeleteTask = async (taskId: number) => {
-
     if(taskId){
       const confirm = await showConfirm('Confirmez la suppression de la tâche')
         if(confirm) {
@@ -93,7 +88,6 @@ const Home: React.FC = () => {
       title: "Confirm",
       message: message,
     });
-    
     return value;
   };
 
