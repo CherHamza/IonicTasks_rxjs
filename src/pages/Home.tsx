@@ -10,6 +10,7 @@ interface Task {
 
 const Home: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTaskLabel, setNewTaskLabel] = useState<string>(''); // Ajout d'un état local pour le libellé de la nouvelle tâche
 
   useEffect(() => {
     const subscription = tasksSubject.pipe(
@@ -26,8 +27,11 @@ const Home: React.FC = () => {
   }, []);
 
   const handleAddTask = async () => {
-    const newTask: Task = { id: 0, label: 'New Task', completed: false };
-    await addTask(newTask);
+    if (newTaskLabel.trim() !== '') { // Vérif que le libellé n'est pas vide
+      const newTask: Task = { id: 0, label: newTaskLabel, completed: false };
+      await addTask(newTask);
+      setNewTaskLabel(''); // Réinitialise le libellé de la nouvelle tâche après l'ajout
+    }
   };
 
   const handleUpdateTask = async (task: Task) => {
@@ -41,7 +45,16 @@ const Home: React.FC = () => {
   return (
     <div>
       <h1>Task List</h1>
-      <button onClick={handleAddTask}>Add Task</button>
+      <div>
+        <input
+          type="text"
+          placeholder="New Task Label"
+          value={newTaskLabel}
+          onChange={(e) => setNewTaskLabel(e.target.value)}
+        />
+        <button onClick={handleAddTask}>Add Task</button>
+      </div>
+
       <ul>
         {tasks.map((task) => (
           <li key={task.id}>
