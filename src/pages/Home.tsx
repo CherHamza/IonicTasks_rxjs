@@ -39,7 +39,6 @@ const Home: React.FC = () => {
 
     // Fetch initial tasks
     getTasks();
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -48,7 +47,7 @@ const Home: React.FC = () => {
     // Vérif que le libellé n'est pas vide
     if (newTaskLabel.trim() !== "") {
       const newTask: Task = { id: 0, label: newTaskLabel, completed: true };
-      const confirm = await showConfirm()
+      const confirm = await showConfirm('Confirmez l\'ajout de tâche')
       if(confirm) {
         await addTask(newTask);
         setNewTaskLabel('');
@@ -71,8 +70,17 @@ const Home: React.FC = () => {
   };
 
   const handleDeleteTask = async (taskId: number) => {
-    await deleteTask(taskId);
+
+    if(taskId){
+      const confirm = await showConfirm('Confirmez la suppression de la tâche')
+        if(confirm) {
+          await deleteTask(taskId);
+          setNewTaskLabel('');
+        }
+    }
   };
+
+
   const showAlert = async (message: string) => {
     await Dialog.alert({
       title: "Stop",
@@ -80,30 +88,15 @@ const Home: React.FC = () => {
     });
   };
 
-  const showConfirm = async () => {
+  const showConfirm = async (message: string) => {
     const { value } = await Dialog.confirm({
       title: "Confirm",
-      message: `Confirmez l'ajout de tâches `,
+      message: message,
     });
-    // mettre la logique ici
-    if (value === true) {
-      console.log("add");
-      // handleAddTask();
-    } else {
-      console.log("not add");
-    }
+    
     return value;
   };
 
-  const showPrompt = async () => {
-    const { value, cancelled } = await Dialog.prompt({
-      title: "Hello",
-      message: `What's your name?`,
-    });
-
-    console.log("Name:", value);
-    console.log("Cancelled:", cancelled);
-  };
   return (
     <div className="task-list-container">
       <h1 className="title">Task List</h1>
@@ -120,7 +113,8 @@ const Home: React.FC = () => {
       </div>
 
       <ul className="tasks-list">
-        {tasks.map((task) => (
+        {tasks
+            .map((task) => (
           <li className="task-item" key={task.id}>
             <span
               className={`task-label ${
