@@ -15,3 +15,10 @@ npm install @capacitor/dialog
 npm run build
 npx cap sync
 ```
+
+### Server start
+
+```bash
+ionic serve
+npm run json-server
+```
